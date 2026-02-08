@@ -1,0 +1,41 @@
+# Frostbite Model Manifest
+# Price Direction Predictor v1
+
+[model]
+name = "price-predictor"
+version = "1.0.0"
+description = "Predicts short-term price direction (up/down/sideways) from recent price movements"
+template = "mlp"
+
+[model.architecture]
+input_size = 4          # 4 price deltas (from 5 prices)
+hidden_size = 16        # Hidden layer neurons
+output_size = 3         # UP, DOWN, SIDEWAYS
+activation = "relu"     # ReLU activation for hidden layer
+output_activation = "softmax"  # Softmax for classification
+
+[model.training]
+epochs = 100
+learning_rate = 0.01
+batch_size = 32
+
+[model.metadata]
+author = "MetaCognixion"
+hackathon = "Colosseum Agent Hackathon 2026"
+use_case = "DeFi price prediction"
+
+[weights]
+format = "json"
+file = "weights.json"
+packed_file = "weights.bin"
+
+[inference]
+# Input: array of 4 normalized price deltas
+# Output: array of 3 probabilities [up, down, sideways]
+input_schema = "vector"
+output_schema = "vector"
+
+[deployment]
+network = "devnet"
+seed = "price-predictor-v1"
+ram_count = 2

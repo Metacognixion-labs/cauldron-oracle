@@ -1,0 +1,36 @@
+{
+  "name": "cauldron-oracle",
+  "version": "1.0.0",
+  "description": "On-chain AI prediction oracle for Solana using Frostbite/Cauldron",
+  "scripts": {
+    "train": "cd models/price_predictor && python train.py",
+    "deploy": "./scripts/deploy.sh",
+    "invoke": "./scripts/invoke.sh",
+    "demo": "./scripts/demo.sh",
+    "build:sdk": "cd sdk && npm run build",
+    "test": "npm run test:model && npm run test:sdk",
+    "test:model": "cd models/price_predictor && python -m pytest",
+    "test:sdk": "cd sdk && npm test"
+  },
+  "keywords": [
+    "solana",
+    "ai",
+    "oracle",
+    "cauldron",
+    "frostbite",
+    "machine-learning",
+    "on-chain-inference"
+  ],
+  "author": "MetaCognixion",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Metacognixion-labs/cauldron-oracle.git"
+  },
+  "workspaces": [
+    "sdk"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
