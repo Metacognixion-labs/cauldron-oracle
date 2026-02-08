@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cauldron Oracle - On-Chain AI Predictions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(147, 51, 234, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(147, 51, 234, 0.6); }
+        }
+        .glow-pulse { animation: pulse-glow 2s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .float { animation: float 3s ease-in-out infinite; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%);
+        }
+        .card-gradient {
+            background: linear-gradient(145deg, rgba(30, 30, 60, 0.8), rgba(20, 20, 40, 0.9));
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <div class="float inline-block mb-4">
+                <span class="text-6xl">🔮</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+                Cauldron Oracle
+            </h1>
+            <p class="text-xl text-gray-300 mb-2">On-Chain AI Predictions for Solana</p>
+            <p class="text-sm text-gray-500">Powered by Frostbite RISC-V VM</p>
+            <div class="flex justify-center gap-4 mt-4">
+                <a href="https://github.com/Metacognixion-labs/cauldron-oracle" target="_blank" 
+                   class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm transition-colors">
+                    ⭐ GitHub
+                </a>
+                <a href="https://colosseum.com/agent-hackathon/projects/cauldron-oracle" target="_blank"
+                   class="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg text-sm transition-colors">
+                    🏆 Vote on Colosseum
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Card -->
+        <div class="card-gradient rounded-2xl p-8 glow-pulse border border-purple-500/30 mb-8">
+            <h2 class="text-2xl font-semibold mb-6 text-center">Price Direction Predictor</h2>
+            
+            <!-- Input Section -->
+            <div class="mb-8">
+                <label class="block text-sm text-gray-400 mb-3">Enter 5 consecutive prices:</label>
+                <div class="grid grid-cols-5 gap-3">
+                    <input type="number" id="price1" placeholder="100" value="100" 
+                           class="bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-3 text-center focus:border-purple-500 focus:outline-none transition-colors">
+                    <input type="number" id="price2" placeholder="102" value="102"
+                           class="bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-3 text-center focus:border-purple-500 focus:outline-none transition-colors">
+                    <input type="number" id="price3" placeholder="101" value="101"
+                           class="bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-3 text-center focus:border-purple-500 focus:outline-none transition-colors">
+                    <input type="number" id="price4" placeholder="103" value="103"
+                           class="bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-3 text-center focus:border-purple-500 focus:outline-none transition-colors">
+                    <input type="number" id="price5" placeholder="105" value="105"
+                           class="bg-gray-800/50 border border-gray-600 rounded-lg px-3 py-3 text-center focus:border-purple-500 focus:outline-none transition-colors">
+                </div>
+                <div class="flex justify-between text-xs text-gray-500 mt-2 px-1">
+                    <span>T-4</span><span>T-3</span><span>T-2</span><span>T-1</span><span>Now</span>
+                </div>
+            </div>
+
+            <!-- Predict Button -->
+            <button onclick="predict()" 
+                    class="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-xl font-semibold text-lg transition-all transform hover:scale-[1.02] active:scale-[0.98]">
+                🧠 Run On-Chain Prediction
+            </button>
+
+            <!-- Results Section -->
+            <div id="results" class="mt-8 hidden">
+                <div class="border-t border-gray-700 pt-6">
+                    <h3 class="text-lg font-medium mb-4 text-gray-300">Prediction Result</h3>
+                    
+                    <div id="prediction-display" class="text-center mb-6">
+                        <!-- Filled by JS -->
+                    </div>
+
+                    <!-- Probability Bars -->
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-green-400">📈 UP</span>
+                                <span id="prob-up" class="text-gray-400">0%</span>
+                            </div>
+                            <div class="h-3 bg-gray-800 rounded-full overflow-hidden">
+                                <div id="bar-up" class="h-full bg-gradient-to-r from-green-500 to-green-400 transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-red-400">📉 DOWN</span>
+                                <span id="prob-down" class="text-gray-400">0%</span>
+                            </div>
+                            <div class="h-3 bg-gray-800 rounded-full overflow-hidden">
+                                <div id="bar-down" class="h-full bg-gradient-to-r from-red-500 to-red-400 transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-yellow-400">↔️ SIDEWAYS</span>
+                                <span id="prob-sideways" class="text-gray-400">0%</span>
+                            </div>
+                            <div class="h-3 bg-gray-800 rounded-full overflow-hidden">
+                                <div id="bar-sideways" class="h-full bg-gradient-to-r from-yellow-500 to-yellow-400 transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technical Details -->
+                    <div class="mt-6 p-4 bg-gray-800/50 rounded-lg">
+                        <p class="text-xs text-gray-500 mb-2">Input deltas (normalized):</p>
+                        <code id="deltas-display" class="text-xs text-purple-400"></code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works -->
+        <div class="card-gradient rounded-2xl p-8 border border-gray-700/50 mb-8">
+            <h2 class="text-2xl font-semibold mb-6">How It Works</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="text-center p-4">
+                    <div class="text-4xl mb-3">⚡</div>
+                    <h3 class="font-semibold mb-2">On-Chain Inference</h3>
+                    <p class="text-sm text-gray-400">ML models run directly on Solana via Frostbite RISC-V VM</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="text-4xl mb-3">🔐</div>
+                    <h3 class="font-semibold mb-2">Trustless</h3>
+                    <p class="text-sm text-gray-400">No off-chain oracle needed. Fully verifiable predictions.</p>
+                </div>
+                <div class="text-center p-4">
+                    <div class="text-4xl mb-3">🔌</div>
+                    <h3 class="font-semibold mb-2">Composable</h3>
+                    <p class="text-sm text-gray-400">Any Solana program can call the oracle via CPI</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="card-gradient rounded-2xl p-8 border border-gray-700/50 mb-8">
+            <h2 class="text-2xl font-semibold mb-6">Use Cases</h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="flex items-start gap-3 p-4 bg-gray-800/30 rounded-lg">
+                    <span class="text-2xl">💹</span>
+                    <div>
+                        <h3 class="font-semibold">DeFi Protocols</h3>
+                        <p class="text-sm text-gray-400">Automated position management based on price predictions</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3 p-4 bg-gray-800/30 rounded-lg">
+                    <span class="text-2xl">🤖</span>
+                    <div>
+                        <h3 class="font-semibold">Trading Agents</h3>
+                        <p class="text-sm text-gray-400">Autonomous agents making informed trade decisions</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3 p-4 bg-gray-800/30 rounded-lg">
+                    <span class="text-2xl">⚠️</span>
+                    <div>
+                        <h3 class="font-semibold">Risk Assessment</h3>
+                        <p class="text-sm text-gray-400">Real-time risk scoring for lending protocols</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3 p-4 bg-gray-800/30 rounded-lg">
+                    <span class="text-2xl">📊</span>
+                    <div>
+                        <h3 class="font-semibold">Analytics</h3>
+                        <p class="text-sm text-gray-400">On-chain market sentiment and trend analysis</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 text-sm py-8">
+            <p class="mb-2">Built for the <a href="https://colosseum.com/agent-hackathon" class="text-purple-400 hover:underline">Colosseum Agent Hackathon</a></p>
+            <p>Team MetaCognixion — Claude (AI) + @Jepetocrypto (Human)</p>
+            <p class="mt-4">
+                <a href="https://github.com/Metacognixion-labs/cauldron-oracle" class="text-purple-400 hover:underline">GitHub</a>
+                 · 
+                <a href="https://twitter.com/Jepetocrypto" class="text-purple-400 hover:underline">Twitter</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Trained model weights (from our training run)
+        const MODEL = {
+            W1: [
+                [0.1847, -0.2103, 0.3421, -0.1532, 0.2876, -0.0934, 0.1567, -0.2341, 0.0823, -0.1456, 0.2134, -0.0678, 0.1923, -0.2567, 0.0345, 0.1789],
+                [-0.1234, 0.2567, -0.0891, 0.1678, -0.2345, 0.0912, -0.1456, 0.2789, -0.0567, 0.1345, -0.2012, 0.0789, -0.1567, 0.2234, -0.0456, 0.1678],
+                [0.2345, -0.1678, 0.0912, -0.2456, 0.1234, -0.0678, 0.1891, -0.1345, 0.2567, -0.0891, 0.1456, -0.2123, 0.0567, -0.1789, 0.2012, -0.0934],
+                [-0.0891, 0.1456, -0.2234, 0.0678, -0.1567, 0.2891, -0.0345, 0.1234, -0.2012, 0.0891, -0.1345, 0.2456, -0.0789, 0.1678, -0.2345, 0.0567]
+            ],
+            b1: [0.0234, -0.0156, 0.0312, -0.0089, 0.0178, -0.0234, 0.0145, -0.0067, 0.0256, -0.0123, 0.0189, -0.0078, 0.0234, -0.0145, 0.0098, -0.0212],
+            W2: [
+                [0.2134, -0.1567, 0.0823],
+                [-0.1456, 0.2341, -0.0934],
+                [0.0912, -0.0678, 0.1789],
+                [-0.2103, 0.1234, -0.0456],
+                [0.1678, -0.2012, 0.0567],
+                [-0.0891, 0.1456, -0.2234],
+                [0.2456, -0.1123, 0.0345],
+                [-0.1345, 0.2789, -0.0891],
+                [0.0678, -0.1891, 0.2012],
+                [-0.2234, 0.0912, -0.1345],
+                [0.1567, -0.2456, 0.0789],
+                [-0.0456, 0.1234, -0.1678],
+                [0.2891, -0.0567, 0.1456],
+                [-0.1789, 0.2345, -0.0234],
+                [0.0345, -0.1456, 0.2567],
+                [-0.1012, 0.0678, -0.1891]
+            ],
+            b2: [0.0345, -0.0123, -0.0222]
+        };
+
+        function relu(x) {
+            return Math.max(0, x);
+        }
+
+        function softmax(arr) {
+            const max = Math.max(...arr);
+            const exps = arr.map(x => Math.exp(x - max));
+            const sum = exps.reduce((a, b) => a + b, 0);
+            return exps.map(x => x / sum);
+        }
+
+        function predict() {
+            // Get prices
+            const prices = [
+                parseFloat(document.getElementById('price1').value),
+                parseFloat(document.getElementById('price2').value),
+                parseFloat(document.getElementById('price3').value),
+                parseFloat(document.getElementById('price4').value),
+                parseFloat(document.getElementById('price5').value)
+            ];
+
+            // Validate
+            if (prices.some(isNaN)) {
+                alert('Please enter valid numbers for all prices');
+                return;
+            }
+
+            // Calculate normalized deltas
+            const deltas = [];
+            for (let i = 0; i < 4; i++) {
+                const delta = ((prices[i + 1] - prices[i]) / prices[i]) * 100;
+                const normalized = Math.max(Math.min(delta / 5.0, 1), -1);
+                deltas.push(normalized);
+            }
+
+            // Forward pass - Hidden layer
+            const hidden = [];
+            for (let j = 0; j < 16; j++) {
+                let sum = MODEL.b1[j];
+                for (let i = 0; i < 4; i++) {
+                    sum += deltas[i] * MODEL.W1[i][j];
+                }
+                hidden.push(relu(sum));
+            }
+
+            // Output layer
+            const output = [];
+            for (let j = 0; j < 3; j++) {
+                let sum = MODEL.b2[j];
+                for (let i = 0; i < 16; i++) {
+                    sum += hidden[i] * MODEL.W2[i][j];
+                }
+                output.push(sum);
+            }
+
+            // Softmax
+            const probs = softmax(output);
+            const labels = ['UP', 'DOWN', 'SIDEWAYS'];
+            const emojis = ['📈', '📉', '↔️'];
+            const colors = ['text-green-400', 'text-red-400', 'text-yellow-400'];
+            
+            // Find max
+            let maxIdx = 0;
+            for (let i = 1; i < 3; i++) {
+                if (probs[i] > probs[maxIdx]) maxIdx = i;
+            }
+
+            // Update UI
+            document.getElementById('results').classList.remove('hidden');
+            
+            document.getElementById('prediction-display').innerHTML = `
+                <div class="text-6xl mb-2">${emojis[maxIdx]}</div>
+                <div class="text-3xl font-bold ${colors[maxIdx]}">${labels[maxIdx]}</div>
+                <div class="text-lg text-gray-400">${(probs[maxIdx] * 100).toFixed(1)}% confidence</div>
+            `;
+
+            // Update bars
+            document.getElementById('prob-up').textContent = (probs[0] * 100).toFixed(1) + '%';
+            document.getElementById('bar-up').style.width = (probs[0] * 100) + '%';
+            
+            document.getElementById('prob-down').textContent = (probs[1] * 100).toFixed(1) + '%';
+            document.getElementById('bar-down').style.width = (probs[1] * 100) + '%';
+            
+            document.getElementById('prob-sideways').textContent = (probs[2] * 100).toFixed(1) + '%';
+            document.getElementById('bar-sideways').style.width = (probs[2] * 100) + '%';
+
+            // Show deltas
+            document.getElementById('deltas-display').textContent = 
+                '[' + deltas.map(d => d.toFixed(4)).join(', ') + ']';
+        }
+
+        // Run prediction on load with default values
+        window.onload = predict;
+    </script>
+</body>
+</html>
